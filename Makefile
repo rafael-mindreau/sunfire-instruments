@@ -3,7 +3,7 @@ RACK_DIR := $(shell cat .rack-sdk-path)
 
 # Must follow the format in the Naming section of
 # https://vcvrack.com/manual/PluginDevelopmentTutorial.html
-SLUG = Mindreau
+SLUG = Sunfire-Instruments
 
 # Must follow the format in the Versioning section of
 # https://vcvrack.com/manual/PluginDevelopmentTutorial.html
