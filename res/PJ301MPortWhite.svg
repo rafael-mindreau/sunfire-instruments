@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:serif="http://www.serif.com/"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="25"
+   height="25"
+   viewBox="0 0 6.6145832 6.6145835"
+   version="1.1"
+   id="svg671"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="PJ301MPortWhite.svg">
+  <defs
+     id="defs665" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="11.2"
+     inkscape:cx="10.263518"
+     inkscape:cy="8.0781638"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="0"
+     inkscape:window-y="30"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata668">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-290.38539)">
+    <g
+       transform="matrix(0.25656372,0,0,0.25656957,-2.9785444,279.70959)"
+       serif:id="Input Jack"
+       id="g4494"
+       style="clip-rule:evenodd;fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5">
+      <g
+         id="g4484"
+         transform="matrix(0.78125,0,0,0.78125,-1.28125,5.28125)">
+        <circle
+           id="circle4482"
+           style="fill:#f0f0f0;stroke:#5d5d5d;stroke-width:1px"
+           r="16"
+           cy="63"
+           cx="33" />
+      </g>
+      <g
+         id="g4488"
+         transform="matrix(0.65625,0,0,0.65625,2.84375,13.1562)">
+        <circle
+           id="circle4486"
+           style="fill:#ffffff;stroke:#5d5d5d;stroke-width:0.79000002px"
+           r="16"
+           cy="63"
+           cx="33" />
+      </g>
+      <g
+         id="g4492"
+         transform="matrix(0.34375,0,0,0.34375,13.1562,32.8437)">
+        <circle
+           id="circle4490"
+           r="16"
+           cy="63"
+           cx="33" />
+      </g>
+    </g>
+  </g>
+</svg>
