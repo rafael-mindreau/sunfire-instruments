@@ -7,7 +7,7 @@ echo "### Building Modules ###\n"
 make dist
 
 echo "### Removing old version from Rack plugins ###"
-rm -R "$RACK_PLUGINS_FOLDER/Sunfire Instruments"
+rm -R "$RACK_PLUGINS_FOLDER/Sunfire-Instruments"
 
 echo "### Adding latest build to Rack plugins ###"
-mv "./dist/Mindreau" "$RACK_PLUGINS_FOLDER"
+mv "./dist/Sunfire-Instruments" "$RACK_PLUGINS_FOLDER"
