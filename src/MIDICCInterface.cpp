@@ -41,9 +41,10 @@ struct MIDICCInterface : Module {
   MidiInputQueue midiInput;
   int8_t ccs[16][128];
 
-  int learningFavouriteId = -1;
+  int teachingFavouriteId = -1;
   MIDICCFavourite favourites[32];
-  SchmittTrigger learnTriggers[32];
+  SchmittTrigger teachTriggers[32];
+  ExponentialFilter ccSmoothing[32];
 
 	MIDICCInterface() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {
 		onReset();
@@ -59,10 +60,10 @@ struct MIDICCInterface : Module {
 
     // Initialise grid with the first 32 CCs on channel 0
     for (int favouriteId = 0; favouriteId < 32; favouriteId++) {
-      favourites[favouriteId] = MIDICCFavourite(0, favouriteId);
+      favourites[favouriteId] = MIDICCFavourite(0, 0);
     }
 
-    learningFavouriteId = -1;
+    teachingFavouriteId = -1;
   }
 
   void step() override {
@@ -72,28 +73,39 @@ struct MIDICCInterface : Module {
       processMessage(msg);
     }
 
-    // Process any button presses
-
-    // For all learned MIDI CCs, get their midi values from the backing ccs list
+    // For all teached MIDI CCs, get their midi values from the backing ccs list
     float lambda = 100.f * engineGetSampleTime();
     for (int favouriteId = 0; favouriteId < 32; favouriteId++) {
-      // Process any learn-button presses
-      if (learnTriggers[favouriteId].process(params[LEARN_BUTTON + favouriteId].value)) {
-        // Turn off any previous learn lights
-        if (learningFavouriteId > -1) {
-          lights[LEARN_LIGHT + learningFavouriteId].value = 0.0;
+      // Check which teach-button was pressed
+      if (teachTriggers[favouriteId].process(params[LEARN_BUTTON + favouriteId].value)) {
+        // Turn off any previous teach lights
+        if (teachingFavouriteId > -1) {
+          lights[LEARN_LIGHT + teachingFavouriteId].value = 0.0;
         }
 
-        learningFavouriteId = favouriteId;
-        lights[LEARN_LIGHT + favouriteId].value = 1.0;
+        // Check if previous favourite button wasn't the same as this one
+        if (teachingFavouriteId != favouriteId) {
+          // Set new teaching location and turn the light on
+          teachingFavouriteId = favouriteId;
+          lights[LEARN_LIGHT + favouriteId].value = 1.0;
+        } else {
+          // If previous teach button press was the same as this one, we simply turn the light back off (which is already done at this point)
+          // And we set the teaching favourite id to -1 to prevent any input from getting teached
+          teachingFavouriteId = -1;
+        }
       }
 
-      // Set outputs with their corresponding learned CC values
-      int learnedCc = favourites[favouriteId].cc;
+      // Set outputs with their corresponding teached CC values
+      int teachedCc = favourites[favouriteId].cc;
       int channel = favourites[favouriteId].channel;
-      float value = rescale(clamp(ccs[channel][learnedCc], -127, 127), 0, 127, 0.f, 10.f);
-      // ccFilters[favouriteId].lambda = lambda;
-      outputs[CC_OUTPUT + favouriteId].value = value;
+      float value = rescale(clamp(ccs[channel][teachedCc], -127, 127), 0, 127, 0.f, 10.f);
+      ccSmoothing[favouriteId].lambda = lambda;
+      outputs[CC_OUTPUT + favouriteId].value = ccSmoothing[favouriteId].process(value);
+
+      // Set light brightness to CC value if not in teach-mode
+      if (teachingFavouriteId != favouriteId) {
+        lights[LEARN_LIGHT + favouriteId].value = rescale(value, 0, 10.f, 0, 1.f);
+      }
     }
   }
 
@@ -104,18 +116,14 @@ struct MIDICCInterface : Module {
       uint8_t cc = msg.note();
       uint8_t channel = msg.channel();
 
-      // If we're in learn-mode, and the msg is not 0x00, apply the CC to the listening grid item per channel
-      if (learningFavouriteId >= 0 && ccs[channel][cc] != msg.data2) {
-        favourites[learningFavouriteId].cc = cc;
-        favourites[learningFavouriteId].channel = channel;
+      // If we're in teach-mode, and the msg is not 0x00, apply the CC to the listening grid item per channel
+      if (teachingFavouriteId >= 0 && ccs[channel][cc] != msg.data2) {
+        favourites[teachingFavouriteId].cc = cc;
+        favourites[teachingFavouriteId].channel = channel;
 
-        // Set led to dim to indicated a learned state
-        lights[LEARN_LIGHT + learningFavouriteId].value = 0.2;
-        learningFavouriteId = -1;
+        teachingFavouriteId = -1;
       }
 
-      // Set CV
-      // Allow CC to be negative if the 8th bit is set
       ccs[channel][cc] = msg.data2;
     }
   }
@@ -170,10 +178,10 @@ struct MIDICCInterfaceWidget : ModuleWidget {
     addParam(ParamWidget::create<PushButtonSmall>(Vec(135, 330), module, MIDICCInterface::LEARN_BUTTON + 31, 0.0, 1.0, 0.0));
 
     // Screws
-		addChild(Widget::create<ScrewSilver>(Vec(RACK_GRID_WIDTH, 0)));
-		addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
-		addChild(Widget::create<ScrewSilver>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-		addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+		addChild(Widget::create<ScrewSilver>(Vec(0, 0)));
+		addChild(Widget::create<ScrewSilver>(Vec(box.size.x - RACK_GRID_WIDTH, 0)));
+		addChild(Widget::create<ScrewSilver>(Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+		addChild(Widget::create<ScrewSilver>(Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
     // Outputs
     addOutput(Port::create<PJ301MPort>(Vec(5, 120), Port::OUTPUT, module, MIDICCInterface::CC_OUTPUT + 0));
